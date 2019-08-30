@@ -126,6 +126,8 @@ router.post('/register', auth.isLoggedIn,function (req, res) {
 //   });
 
 // });
+
+
 /*
  * GET login
  */
