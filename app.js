@@ -5,17 +5,18 @@ const express           = require('express'),
       path              = require('path'),
       flash             = require('connect-flash'),
       session           = require('express-session'),
+      fileUpload        = require('express-fileupload'),
       expressValidator  = require('express-validator'),
       passport          = require('passport');
  
 
 const app = express();
 
-const auth = require('./config/auth');
+const auth = require('./config/auth');``
 
 // Setup Database
 const myDb = require('./config/database');
-mongoose.connect(myDb.databaseProd, { useNewUrlParser: true });
+mongoose.connect(myDb.database, { useNewUrlParser: true });
 mongoose.connection
   .on('error', console.error.bind(console, 'Connection error: '))
   .once('open', () => console.log('Connected to MongoDB'))
@@ -27,6 +28,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+app.use(fileUpload());
 
 app.use(session({
   secret: auth.secret,
@@ -49,9 +51,41 @@ app.use(expressValidator({
       }
       return {
           param: formParam,
-          msg: msg,
+          msg: msg, 
           value: value
       };
+  },
+  customValidators: {
+    isImage: function (value, filename) {
+        var extension = (path.extname(filename)).toLowerCase();
+        switch (extension) {
+            case '.jpg':
+                return '.jpg';
+            case '.jpeg':
+                return '.jpeg';
+            case '.png':
+                return '.png';
+            case '':
+                return '.jpg';
+            default:
+                return false;
+        }
+    },
+    isValidFile: function (value, filename) {
+      var extension = (path.extname(filename)).toLowerCase();
+      switch (extension) {
+          case '.txt':
+              return '.txt';
+          case '.csv':
+              return '.csv';
+          case '.docx':
+              return '.docx';
+          case '.doc':
+              return '.doc';
+          default:
+              return false;
+      }
+  }
   }
 }));
 
@@ -88,7 +122,7 @@ app.use('/', usersRoutes)
 const server_host = process.env.YOUR_HOST || '0.0.0.0';
 
 // Choose Port
-const port = process.env.PORT || 8888 ;
+const port = process.env.PORT || 3000 ;
 
 // Start Server
 app.listen(port, server_host,() => {

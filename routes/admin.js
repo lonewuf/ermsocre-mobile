@@ -15,12 +15,15 @@ const Report = require('../models/reports')
 
 router.get('/', auth.isAdmin, (req, res) => {
   CompanyNum.find({})
-    .then(foundCompanyID => {
+    .then(foundCompanyID => { 
       Report.find({})
+        .sort({date: -1})
+        .populate('employee')
         .then(foundReports => {
-          Leave.find({})
+          Leave.find({status: '1'})
+            .populate('employee')
+            .sort({date: -1})
             .then(foundLeaves => {
-
               User.find({})
                 .populate('reports')
                 .populate('leaves')
@@ -48,6 +51,49 @@ router.get('/', auth.isAdmin, (req, res) => {
     .catch(err => console.log(err))
   
 });
+
+router.post('/approve-leave/:id', auth.isAdmin, (req, res) => {
+  const id = req.params.id;
+
+  Leave.updateOne({_id: id}, {$set: {status: '2'}})
+    .then(updatedLeave => {
+      Leave.findById(id)
+        .populate('employee')
+        .then(foundLeave => {
+          var typeLeave = foundLeave.type_leave == 'sick_leave' ? 'sick_leave' : 'vacation_leave';
+
+          if(typeLeave == 'sick_leave') {
+            User.updateOne({_id: foundLeave.employee._id}, {$inc: {sick_leave: -parseInt(foundLeave.days_leave)}})
+              .then(updatedL => {
+                req.flash('success', 'Sick Leave approved')
+                res.redirect('back')
+              })
+              .catch(err => console.log(err))
+          } else if(typeLeave == 'vacation_leave') {
+            User.updateOne({_id: foundLeave.employee._id}, {$inc: {vacation_leave: -parseInt(foundLeave.days_leave)}})
+              .then(updatedL => {
+                req.flash('success', 'Vacation Leave approved')
+                res.redirect('back')
+              })
+              .catch(err => console.log(err))
+          }
+          
+        })
+        .catch(err => console.log(err))
+    })
+    .catch(err => console.log(err))
+})
+
+router.post('/disapprove-leave/:id', (req, res) => {
+  const id = req.params.id;
+
+  Leave.updateOne({_id: id}, {$set: {status: '0'}})
+    .then(updatedLeave => {
+      req.flash('warning', 'Leave disapproved')
+      res.redirect('back')
+    })
+    .catch(err => console.log(err))
+})
 
 router.get('/generate-employee-number', auth.isAdmin,(req, res) => {
 
@@ -120,7 +166,7 @@ router.post('/send-company-id/:id', auth.isAdmin,(req, res) => {
     subject: 'ERMSCORE - Company ID', // Subject line
     html: `<h2>Hi Mr./Mrs./Ms. </h2>
     <br><br>
-    <p>This is your Company ID for your registration in our website: ${id}</p>
+    <p>This is your Company ID for your registration in our website: <strong>${id}</strong></p>
     <br>`
   };
 

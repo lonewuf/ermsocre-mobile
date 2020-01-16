@@ -3,25 +3,37 @@ const mongoose = require('mongoose');
 // User Schema
 const ReportSchema = mongoose.Schema({
    
-    name: {
-      type: String,
-      require: true
-    },
-    email: {
-      type: String,
-      require: true
-    },
-    user_company_id: {
+    employee: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
     },
     date_logged: {
-      type: Date,
+      type: Date, 
       default: Date.now()
     },
+    month_logged: {
+      type: Number, 
+    },
+    year_logged: {
+      type: Number, 
+    },
+    day_logged: {
+      type: Number, 
+    },
+    month: {
+      type: Number
+    },
+    day: {
+      type: Number
+    },
+    year: {
+      type: Number
+    },
     report: {
-      type: String,
-      require: true
+      type: String
+    },
+    file: {
+      type: String
     }
 
 });

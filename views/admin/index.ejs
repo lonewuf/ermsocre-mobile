@@ -15,7 +15,7 @@
             </div>
 
             <div class="p-4 bg-black">
-              Company ID: <%= user._id %>
+              Company ID: <%= user.company_num %>
             </div>
 
             <div>
@@ -53,16 +53,33 @@
               <thead>
                 <tr>
                   <th class="text-center">Complete Name</th>
-                  <th class="text-center">Date</th>
+                  <th class="text-center">Date Submitted</th>
+                  <th class="text-center">Date Report</th>
                   <th class="text-center">Reports</th>
                 </tr>
                 </thead>
                 <tbody>
                 <% foundReports.forEach(report => {%>
                 <tr>
-                  <td class="text-center"><a href="/profile/user/<%= report.user_company_id %>" target="_blank"><%= report.name %></a></td>
-                  <td class="text-center"><%= report.date_logged.toLocaleString() %></td>
-                  <td class="text-center"><%= report.report %></td>
+                  <td class="text-center"><a href="/profile/user/<%= report.employee._id %>" target="_blank"><%= report.employee.name %></a></td>
+                  <td class="text-center"><%= report.date_logged.toLocaleString()%></td>
+                  <td class="text-center"><%= report.year %>-<%= report.month %>-<%= report.day %></td>
+                  <% if(report.file && report.report) { %>
+                    <td><%= report.report %> <br>
+                      <a href="/employee_images/<%= report.employee._id %>/files/<%= report.file %>" target="_blank"
+                        download="<%= report.employee.name %>-<%= report.employee.company_num %>-(<%= report.month %>-<%= report.day %>-<%= report.year %>)">
+                        Download report
+                    </a>
+                    </td>
+                  <% } else if(report.file) { %>
+                    <td><a href="/employee_images/<%= report.employee._id %>/files/<%= report.file %>" target="_blank"
+                      download="<%= report.employee.name %>-<%= report.employee.company_num %>-(<%= report.month %>-<%= report.day %>-<%= report.year %>)"
+                      >
+                      Download report
+                    </a></td>
+                  <% } else { %>
+                    <td><%= report.report %></td>
+                  <% } %>
                 </tr>
                 <% }) %>
                 </tbody>
@@ -88,20 +105,29 @@
                   <th>Complete Name</th>
                   <th>From</th>
                   <th>To</th>
-                  <th>Sick Leave</th>
-                  <th>Vacation Leave</th>
+                  <th>Type of leave</th>
+                  <th>Days Leave</th>
                   <th>Leaves Reason</th>
+                  <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <% foundLeaves.forEach(leave => {%>
                   <tr>
-                    <td class="text-center"><a href="/profile/user/<%= leave.user_company_id %>" target="_blank"><%= leave.name %></a></td>
-                    <td class="text-center"><%= leave.date_from.toLocaleString() %></td>
-                    <td class="text-center"><%= leave.date_to.toLocaleString() %></td>
-                    <td class="text-center"><%= leave.sick_leave %></td>
-                    <td class="text-center"><%= leave.vacation_leave %></td>
-                    <td class="text-center"><%= leave.reason %></td>
+                    <td class="text-center"><a href="/profile/user/<%= leave.employee._id %>" target="_blank"><%= leave.employee.name %></a></<td>
+                    <td><%= leave.date_from.toLocaleString() %></td>
+                    <td><%= leave.date_to.toLocaleString() %></td>
+                    <% if(leave.type_leave == 'sick_leave') { %>
+                      <td >Sick Leave</td>
+                    <% } else if (leave.type_leave == 'vacation_leave'){ %>
+                      <td >Vacation Leave</td>
+                    <% } %>
+                    <td><%= leave.days_leave %></td>
+                    <td><%= leave.reason %></td>
+                    <td>
+                    <form action="/admin/approve-leave/<%= leave._id %>" method="post"><button type="submit" class="btn btn-success btn-sm">Approve</button></form>
+                    <form action="/admin/disapprove-leave/<%= leave._id %>" method="post"><button type="submit" class="btn btn-danger btn-sm">Disapprove</button></form>
+                    </td>
                   </tr>
                 <% }) %>
                 
@@ -120,14 +146,9 @@
                   <% foundUsers.forEach(user => {%>
                     <tr>
                       <td class="text-center"><a href="/profile/user/<%= user._id %>" target="_blank"><%= user.name %></a></td>
-                      <% var sick_leave = 0 %>
-                      <% var vacation_leave = 0 %>
-                      <% user.leaves.forEach(leave => { %>
-                        <% sick_leave += leave.sick_leave %>
-                        <% vacation_leave += leave.vacation_leave %>
-                      <% }) %>
-                      <td class="text-center"><%= sick_leave %></td>
-                        <td class="text-center"><%= vacation_leave %></td>
+                      
+                      <td class="text-center"><%= user.sick_leave %></td>
+                      <td class="text-center"><%= user.vacation_leave %></td>
                     </tr>
                   <% }) %>
                   
@@ -152,15 +173,17 @@
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th>Complete Name</th>
-                  <th>Company ID</th>          
+                  <th class="text-center">Complete Name</th>
+                  <th class="text-center">Company ID</th>          
                 </tr>
               </thead>
                 <tbody>
                 <% foundUsers.forEach(user => {%>
                   <tr>
                     <td class="text-center"><a href="/profile/user/<%= user._id %>" target="_blank"><%= user.name %></a></td>
-                    <td class="text-center"><a href="/profile/user/<%= user._id %>" target="_blank"><%= user.id %></a></td>
+                    <td class="text-center"><a href="/profile/user/<%= user._id %>" target="_blank"><%= user.company_num %></a> &nbsp;&nbsp;
+                    <a href="/delete-emp/<%= user._id %>" class="btn btn-danger">Delete</a>
+                    </td>
                   </tr>
                 <% }) %>
                 </tbody>

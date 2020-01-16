@@ -23,8 +23,12 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
           <% if(user.admin == 1) {%>
+            
           <li>
             <a href="/admin" class="nav-link">Admin Area</a>
+          </li>
+          <li>
+            <a href="#" data-toggle="modal" data-target="#sign-upModal" class="nav-link">Register New Employee</a>
           </li>
           <% } %>
           <li class="nav-item">
@@ -39,13 +43,16 @@
     <p class="text-white">sad</p>
   </div>
 
-  <%- messages('messages', locals) %>
-    <% if(errors) {%>
-      <% errors.forEach(err => { %>
-        <div class="container mt-5">
-          <div class="alert alert-danger mt-5">
-            <%= err.msg %>
-          </div>
+  <div class="container">
+      <%- messages('messages', locals) %>
+  </div>
+  
+  <% if(errors) {%>
+    <% errors.forEach(err => { %>
+      <div class="container">
+        <div class="alert alert-danger">
+          <%= err.msg %>
         </div>
-      <% }) %>
-    <% } %>
+      </div>
+    <% }) %>
+  <% } %>

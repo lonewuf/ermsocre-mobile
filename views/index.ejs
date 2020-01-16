@@ -87,13 +87,12 @@
                       </div>
                     <% }) %>
                   <% } %>
-                  <h3>Triple Forms</h3>
-                  <p>Please fill out this forms to sign-in and register</p>
+                  <h3>Double Forms</h3>
+                  <p>Please fill out this forms to sign-in and proceed to forgot password</p>
                 <br>
                 <button type="button" class="btn btn-light btn-block btn-lg" data-toggle="modal" data-target="#sign-inModal">Sign-in</button>
               <br><br>
-                <button class="btn btn-light btn-block btn-lg" data-toggle="modal" data-target="#sign-upModal">Sign-up</button>
-              <br><br>
+
                 <button class="btn btn-light btn-block btn-lg" data-toggle="modal" data-target="#ForgotPasswordModal">Forgot Password</button>
                 </div>
               </div>
@@ -260,65 +259,6 @@
     </div>
   </div>
 </div>
-
-  <!-- Sign-up MODAL -->
-  <div class="modal fade text-dark" id="sign-upModal">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="sign-upModalTitle">Register Here</h5>
-          <button class="close" data-dismiss="modal"><span>&times;</span></button>
-        </div>
-        <div class="modal-body">
-          
-          <form action="/register" method="POST">
-            <div class="form-group">
-              <label >Name</label>
-              <input type="text" name="name" class="form-control" id="validationCustom01" placeholder="Whole Name"  required>
-            </div>
- 
-            <div class="form-group">
-              <label >Company ID</label>
-              <input type="text" name="company_num" class="form-control" " placeholder="Company ID" required>
-          </div>
-
-          <div class="form-group">
-              <label >Address</label>
-              <input type="text" name="address" class="form-control" " placeholder="Address" required>
-          </div>
-
-          <div class="form-group">
-              <label >Phone Number</label>
-              <input type="text" name="phone_number" class="form-control"  placeholder="Phone Number" required>
-          </div>
-
-          <div class="form-group">
-              <label >Email Address</label>
-              <input type="email" name="email" class="form-control"  placeholder="Email Address" required>
-          </div>
-
-          <div class="form-group">
-              <label >Password</label>
-              <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd" required>
-          </div>
-
-          <div class="form-group">
-              <label >Confirm Password</label>
-              <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd2" required>
-          </div>
-
-          <!-- <div class="form-group form-check">
-              <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" name="check me out" required> I Agree to terms and conditions
-              <div class="invalid-feedback">You must agree before submitting.</div>
-            </label>
-          </div> -->
-            <button type="submit" class="btn btn-primary btn-block">Submit Form</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
 
 
    <!-- Forgot Password MODAL -->

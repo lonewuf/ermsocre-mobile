@@ -3,17 +3,16 @@ const mongoose = require('mongoose');
 // User Schema
 const LeavesSchema = mongoose.Schema({
    
-    name: {
-      type: String,
-      require: true
-    },
-    email: {
-      type: String,
-      require: true
-    },
-    user_company_id: {
+    employee: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
+    },  
+    type_leave: {
+      type: String
+    },
+    date: {
+      type: Date,
+      default: Date.now()
     },
     date_from: {
       type: Date,
@@ -23,17 +22,16 @@ const LeavesSchema = mongoose.Schema({
       type: Date,
       require: true
     },
-    sick_leave: {
+    days_leave: {
       type: Number,
-      require: true
-    },
-    vacation_leave: {
-      type: Number,
-      require: true
     },
     reason: {
       type: String,
       require: true
+    },
+    status: {
+      type: String,
+      default: '1' // 2 - approved  1 - pending  0 - cancelled
     }
 
 });

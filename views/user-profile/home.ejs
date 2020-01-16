@@ -4,7 +4,7 @@
   <header id="main-header">
   <div class="row no-gutters">
     <div class="col-lg-4 col-md-5">
-      <img src="/img/personn.jpg">
+      <img src="/employee_images/<%= foundUser._id %>/<%= foundUser.image %>">
     </div>
     <div class="col-lg-8 col-md-7">
       <div class="d-flex flex-column">
@@ -15,7 +15,7 @@
         </div>
 
         <div class="p-4 bg-black">
-          Company ID: <%= foundUser._id %>
+          Company ID: <%= foundUser.company_num %>
         </div>
 
         <div>
@@ -47,9 +47,10 @@
     <p>Employees reports and activities will be inserted here.</p>
   </div>
 
+  <%if(foundUser.id == user._id) {%>
   <div class="card card-body py-5">
 
-    <form action="/profile/insert-report" method="POST">
+    <form action="/profile/insert-report" method="POST" enctype="multipart/form-data">
       <div class="form-group">
         <div class="input-group input-group-lg">
           <span class="input-group-addon bg-danger text-white">
@@ -66,6 +67,18 @@
           <textarea name="report" rows="5" class="form-control bg-dark text-white" placeholder="Report"></textarea>
         </div>
       </div>
+      <button type="button" class="btn btn-outline-danger d-block mb-4" data-toggle="collapse" data-target="#collapse-btn-1">Upload a file</button>
+
+      <div class="collapse mb-5" id="collapse-btn-1">
+        <div class="card">
+          <div class="card-body">
+              <div class="form-group">
+                  <label for="">Choose file</label>
+                  <input type="file" class="form-control" name="fileUp" id="fileUp">
+              </div>
+          </div>
+        </div>
+      </div>
         <div class="btn-group">
           <input type="submit" value="Submit" class="btn btn-success btn-lg">
           <input type="reset" value="Reset" class="btn btn-danger btn-lg">
@@ -77,6 +90,7 @@
     <h2>Records of Reports</h2>
     <p>Employees reports and activities will be stored here.</p>
   </div>
+  <% } %>
 
   <div class="card card-body py-5">
     <div class="card-deck">
@@ -85,14 +99,32 @@
           <table class="table table-bordered">
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Reports</th>
+                <th class="text-center">Date Submitted</th>
+                <th class="text-center">Date Report</th>
+                <th class="text-center">Reports</th>
               </tr>
             <tbody>
               <% foundUser.reports.forEach(report => {%>
               <tr>
-                <td><%= report.date_logged.toLocaleString()%></td>
-                <td><%= report.report %></td>
+                <td class="text-center"><%= report.date_logged.toLocaleString()%></td>
+                <td class="text-center"><%= report.year %>-<%= report.month %>-<%= report.day %></td>
+                <% if(report.file && report.report) { %>
+                  <td><%= report.report %> <br>
+                    <a href="/employee_images/<%= foundUser._id %>/files/<%= report.file %>" target="_blank"
+                      download="<%= foundUser.name %>-<%= foundUser.company_num %>-(<%= report.month %>-<%= report.day %>-<%= report.year %>)">
+                      Download report
+                  </a>
+                  </td>
+                <% } else if(report.file) { %>
+                  <td><a href="/employee_images/<%= foundUser._id %>/files/<%= report.file %>" target="_blank"
+                    download="<%= foundUser.name %>-<%= foundUser.company_num %>-(<%= report.month %>-<%= report.day %>-<%= report.year %>)"
+                    >
+                    Download report
+                  </a></td>
+                <% } else { %>
+                  <td><%= report.report %></td>
+                <% } %>
+                
               </tr>
               <% }) %>
               </tbody>
@@ -115,7 +147,7 @@
 
   <div class="card card-body py-5">
 
-    <%if(foundUser.id != user._id) {%>
+    <%if(foundUser.id == user._id) {%>
 
       <form action="/profile/leaves" method="POST">
         <div class="form-group">
@@ -142,20 +174,12 @@
               <i class="fa fa-vcard-o"></i>
             </span>
             <select id="leave" name="leave" class="form-control bg-dark text-white">
-              <option >Choose type of leave</option>
+              <option value ="">Choose type of leave</option>
               <option value="sick_leave">Sick Leave</option>
               <option value="vacation_leave">Vacation Leave</option>
             </select>
 
           
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="input-group input-group-lg">
-            <span class="input-group-addon bg-success text-white">
-              <i class="fa fa-calculator"></i>
-            </span>
-            <input type="text" name="day" class="form-control bg-dark text-white" placeholder="Whole day or Half day. eg 1 or .5">
           </div>
         </div>
         <div class="form-group">
@@ -188,18 +212,30 @@
             <tr>
               <th>From</th>
               <th>To</th>
-              <th>Sick Leave</th>
-              <th>Vacation Leave</th>
+              <th>Type of leave</th>
+              <th>Days Leave</th>
               <th>Leaves Reason</th>
+              <th>Status</th>
             </tr>
             <tbody>
             <% foundUser.leaves.forEach(leave => {%>
               <tr>
                 <td><%= leave.date_from.toLocaleString() %></td>
                 <td><%= leave.date_to.toLocaleString() %></td>
-                <td><%= leave.sick_leave %></td>
-                <td><%= leave.vacation_leave %></td>
+                <% if(leave.type_leave == 'sick_leave') { %>
+                  <td >Sick Leave</td>
+                <% } else if (leave.type_leave == 'vacation_leave'){ %>
+                  <td >Vacation Leave</td>
+                <% } %>
+                <td><%= leave.days_leave %></td>
                 <td><%= leave.reason %></td>
+                <% if(leave.status == 2) { %>
+                  <td class="text-success">Approved</td>
+                <% } else if (leave.status == 1){ %>
+                  <td class="text-primary">Pending</td>
+                <% } else { %>
+                  <td class="text-danger">Denied</td>
+                <% } %>
               </tr>
             <% }) %>   
           </thead>
